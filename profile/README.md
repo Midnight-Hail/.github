@@ -57,6 +57,8 @@ operations-suite  ← the mission console (Docker)
 
 ## Quick Start
 
+### Docker (full feature set)
+
 ```bash
 git clone https://github.com/midnight-hail/operations-suite.git
 cd operations-suite
@@ -66,4 +68,76 @@ docker compose build && docker compose up
 
 Open `http://localhost:7860`. On first startup an `admin` account is created with a temporary password printed to stdout.
 
-See the [operations-suite README](https://github.com/midnight-hail/operations-suite) for full setup instructions.
+### Local Development (Node only)
+
+Python-backed routes (builds, validator, coverage, CTI graph) are unavailable outside Docker. All other features work locally.
+
+```bash
+cd operations-suite
+npm install
+npm run install:all
+
+# create server/.env
+echo "DATA_DIR=./data`nPORT=8080" > server/.env
+
+npm run dev
+```
+
+Open `http://localhost:5173`. Vite proxies all `/api` requests to the Express server at `8080`.
+
+### Management Mode (license authority)
+
+Set `MANAGEMENT_MODE=true` to enable the License Manager tab and `/api/license-mgmt/*` routes. This mode is intended for the issuing-authority instance only.
+
+**PowerShell:**
+```powershell
+$env:MANAGEMENT_MODE = "true"
+node server/dist/index.js
+```
+
+**Docker:**
+```bash
+MANAGEMENT_MODE=true docker compose up
+```
+
+---
+
+## Python Tool Dependencies
+
+Each Python tool can be installed and run independently.
+
+### sigma-core (shared library — install first)
+
+```bash
+pip install -e ./sigma-core
+# with Splunk deployment support:
+pip install -e "./sigma-core[deploy]"
+```
+
+### ta-sigma
+
+```bash
+pip install -e ./sigma-core
+pip install -e ./ta-sigma
+python -m ta_sigma_builder --index windows --output-dir dist
+```
+
+### ta-cti
+
+```bash
+pip install -e ./sigma-core
+pip install -e ./ta-cti
+python convert_rf_to_sigma.py --lookups-dir ./lookups --output-dir rf_sigma_rules
+python -m ta_cti_builder --sigma-root rf_sigma_rules --index windows
+```
+
+### detections-validator
+
+```bash
+pip install requests pyyaml
+python validator.py --static-only --apps ../ta-sigma/dist/Splunk_TA_SIGMA
+```
+
+---
+
+See the [operations-suite README](https://github.com/midnight-hail/operations-suite) for full setup and architecture details.

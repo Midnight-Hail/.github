@@ -76,14 +76,19 @@ Python-backed routes (builds, validator, coverage, CTI graph) are unavailable ou
 cd operations-suite
 npm install
 npm run install:all
-
-# create server/.env
-echo "DATA_DIR=./data`nPORT=8080" > server/.env
-
 npm run dev
 ```
 
+Create `server/.env` before starting (gitignored):
+
+```
+DATA_DIR=./data
+PORT=8080
+```
+
 Open `http://localhost:5173`. Vite proxies all `/api` requests to the Express server at `8080`.
+
+> **Expected on startup:** `[coverage] Script returned error: No module named 'ta_sigma_core'` — Python tools are only available inside Docker. Auth, settings, search, rule builder, field mappings, atomics, and purple team all work without it.
 
 ### Management Mode (license authority)
 

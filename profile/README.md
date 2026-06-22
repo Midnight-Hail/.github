@@ -88,7 +88,10 @@ PORT=8080
 
 Open `http://localhost:5173`. Vite proxies all `/api` requests to the Express server at `8080`.
 
-> **Expected on startup:** `[coverage] Script returned error: No module named 'ta_sigma_core'` — Python tools are only available inside Docker. Auth, settings, search, rule builder, field mappings, atomics, and purple team all work without it.
+> **Expected on startup:** `[coverage] Script returned error: No module named 'ta_sigma_core'` — Python tools are only available inside Docker. Auth, settings, search, rule builder, field mappings, atomics, and purple team all work without it. To silence the warning, install sigma-core locally:
+> ```bash
+> pip install -e ../sigma-core
+> ```
 
 ### Management Mode (license authority)
 
